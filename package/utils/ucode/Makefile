@@ -8,17 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ucode
-PKG_RELEASE:=3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=https://github.com/jow-/ucode.git
-PKG_SOURCE_DATE:=2024-07-22
-PKG_SOURCE_VERSION:=b610860dd4a0591ff586dd71a50f556a0ddafced
-PKG_MIRROR_HASH:=a5ec51dd989174422d3b19b022ff4f863d57eb559c9f08d54c0d10651f598357
+PKG_SOURCE_DATE:=2025-07-18
+PKG_SOURCE_VERSION:=3f64c8089bf3ea4847c96b91df09fbfcaec19e1d
+PKG_MIRROR_HASH:=55fbff7c527e1fadbda2e038636f39419649841ee63a5f3cdb50b9714b13420c
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=ISC
 
 PKG_ABI_VERSION:=20230711
+PKG_BUILD_DEPENDS:=libmd
 HOST_BUILD_DEPENDS:=libjson-c/host
 
 include $(INCLUDE_DIR)/package.mk
@@ -51,7 +52,8 @@ CMAKE_HOST_OPTIONS += \
 	-DUCI_SUPPORT=OFF \
 	-DULOOP_SUPPORT=OFF \
 	-DDEBUG_SUPPORT=ON \
-	-DLOG_SUPPORT=OFF
+	-DLOG_SUPPORT=OFF \
+	-DDIGEST_SUPPORT=OFF
 
 
 define Package/ucode/default
@@ -155,7 +157,7 @@ $(eval $(call UcodeModule, \
 	The resolv plugin implements simple DNS resolving.))
 
 $(eval $(call UcodeModule, \
-	rtnl, RTNL_SUPPORT, +libnl-tiny +libubox,  \
+	rtnl, RTNL_SUPPORT, +libnl-tiny +libubox, \
 	The rtnl plugin provides access to the Linux routing netlink API.))
 
 $(eval $(call UcodeModule, \
@@ -177,6 +179,10 @@ $(eval $(call UcodeModule, \
 $(eval $(call UcodeModule, \
 	uloop, ULOOP_SUPPORT, +libubox, \
 	The uloop module allows ucode scripts to interact with OpenWrt uloop event loop implementation.))
+
+$(eval $(call UcodeModule, \
+	digest, DIGEST_SUPPORT, , \
+	The digest module allows ucode scripts to use libmd digests.))
 
 $(eval $(call BuildPackage,libucode))
 $(eval $(call BuildPackage,ucode))
