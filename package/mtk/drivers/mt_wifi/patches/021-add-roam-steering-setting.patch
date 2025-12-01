@@ -1,0 +1,224 @@
+diff -u -r a/mt_wifi/embedded/ap/ap.c b/mt_wifi/embedded/ap/ap.c
+--- a/mt_wifi/embedded/ap/ap.c	2025-08-22 08:37:31.927235133 +0000
++++ b/mt_wifi/embedded/ap/ap.c	2025-08-22 08:43:16.308634037 +0000
+@@ -629,6 +629,45 @@
+ 	return TRUE;
+ }
+ 
++#ifdef BAND_STEERING
++static int SendSteeringEvent(RTMP_ADAPTER *pAd, const char *if_name, unsigned char *sta_addr)
++{
++    struct sk_buff *skb_out;
++    struct nlmsghdr *nlh;
++    int res;
++    struct steering_event_data msg_data;
++
++    if (!pAd->netlink_sock) {
++        MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "Band steering netlink socket is not ready.\n");
++        return -1;
++    }
++    
++    strncpy(msg_data.if_name, if_name, IFNAMSIZ);
++    memcpy(msg_data.sta_addr, sta_addr, MAC_ADDR_LEN);
++
++    skb_out = nlmsg_new(sizeof(msg_data), GFP_ATOMIC);
++    if (!skb_out) {
++        MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "Failed to allocate new skb\n");
++        return -ENOMEM;
++    }
++
++    nlh = nlmsg_put(skb_out, 0, 0, NLMSG_DONE, sizeof(msg_data), 0);
++    memcpy(nlmsg_data(nlh), &msg_data, sizeof(msg_data));
++
++    res = nlmsg_multicast(pAd->netlink_sock, skb_out, 0, STEERING_GROUP, GFP_ATOMIC);
++    if (res < 0) {
++		if (res == -3) {
++			MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "No daemon listening on band steering netlink socket\n");
++			return res;
++		}
++        MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "Unknown band steering netlink multicast error: %d\n", res);
++    } else {
++        MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_INFO, "Band steering event sent for "MACSTR"\n", MAC2STR(sta_addr));
++    }
++    
++    return res;
++}
++#endif /* BAND_STEERING */
+ 
+ /*
+ 	==========================================================================
+@@ -4029,6 +4068,24 @@
+ 
+ 		avgRssi = RTMPAvgRssi(pAd, &pEntry->RssiSample);
+ 
++#ifdef BAND_STEERING
++		if ( pEntry->RssiSample.Rssi_Updated && pMbss->SteeringThreshold &&
++			(avgRssi < pMbss->SteeringThreshold)) {
++			
++			MTWF_DBG(pAd, DBG_CAT_AP, DBG_SUBCAT_ALL, DBG_LVL_NOTICE,
++					 "Steering STA "MACSTR", RSSI SteeringThreshold Thres[%d]-[%d]\n",
++					  MAC2STR(pEntry->Addr), pMbss->SteeringThreshold,	avgRssi);
++    		char if_name[IFNAMSIZ];
++
++    		if (WMODE_CAP_2G(pEntry->wdev->PhyMode)) {
++        		snprintf(if_name, IFNAMSIZ, "ra0");
++    		} else {
++        		snprintf(if_name, IFNAMSIZ, "rax0");
++    		}
++    		SendSteeringEvent(pAd, if_name, pEntry->Addr);
++		}
++#endif /* BAND_STEERING */
++
+ 		if ( pEntry->RssiSample.Rssi_Updated && pMbss->RssiLowForStaKickOut &&
+ 			(avgRssi < pMbss->RssiLowForStaKickOut)) {
+ 			bDisconnectSta = TRUE;
+@@ -7090,6 +7147,17 @@
+ 			ops->set_csi_cn_info(pAd, u1BandIdx);
+ #endif /* WIFI_CSI_CN_INFO_SUPPORT */
+ 
++#ifdef BAND_STEERING
++	struct netlink_kernel_cfg cfg = {
++    	.groups = STEERING_GROUP,
++	};
++
++	pAd->netlink_sock = netlink_kernel_create(&init_net, NETLINK_STEERING, &cfg);
++	if (!pAd->netlink_sock) {
++		MTWF_DBG(pAd, DBG_CAT_INIT, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "Failed to create band steering netlink socket.\n");
++	}
++#endif /* BAND_STEERING */
++
+ 	return NDIS_STATUS_SUCCESS;
+ }
+ 
+@@ -7197,6 +7265,13 @@
+ 	MulticastDLTableReset(pAd, &pAd->pMcastDLTable);
+ #endif
+ #endif /* IGMP_SNOOP_SUPPORT */
++
++#ifdef BAND_STEERING
++	if (pAd->netlink_sock) {
++	    netlink_kernel_release(pAd->netlink_sock);
++    	pAd->netlink_sock = NULL;
++	}
++#endif /* BAND_STEERING */
+ }
+ 
+ /*
+diff -u -r a/mt_wifi/embedded/ap/ap_cfg.c b/mt_wifi/embedded/ap/ap_cfg.c
+--- a/mt_wifi/embedded/ap/ap_cfg.c	2025-08-22 08:37:34.043241234 +0000
++++ b/mt_wifi/embedded/ap/ap_cfg.c	2025-08-22 08:47:25.818000459 +0000
+@@ -427,6 +427,10 @@
+ 
+ INT	Set_AP_KickStaRssiLow_Proc(RTMP_ADAPTER *pAd, RTMP_STRING *arg);
+ 
++#ifdef BAND_STEERING
++INT	Set_AP_SteeringThreshold_Proc(RTMP_ADAPTER *pAd, RTMP_STRING *arg);
++#endif /* BAND_STEERING */
++
+ #ifdef ZERO_LOSS_CSA_SUPPORT
+ INT Set_KickOffSta_Proc(RTMP_ADAPTER *pAd, RTMP_STRING *arg);
+ #endif
+@@ -1264,6 +1268,9 @@
+ #endif /* SPECIFIC_TX_POWER_SUPPORT */
+ 	{"AssocReqRssiThres",           Set_AP_ASSOC_REQ_RSSI_THRESHOLD},
+ 	{"KickStaRssiLow",				Set_AP_KickStaRssiLow_Proc},
++#ifdef BAND_STEERING
++	{"Steeringthresold",				Set_AP_SteeringThreshold_Proc},
++#endif /* BAND_STEERING */
+ #ifdef ZERO_LOSS_CSA_SUPPORT
+ 	{"KickOffSta",					Set_KickOffSta_Proc},
+ 	{"KickOffTime",					Set_KickOffTime_Proc},
+@@ -14967,6 +14974,36 @@
+ 	return TRUE;
+ }
+ 
++#ifdef BAND_STEERING
++INT Set_AP_SteeringThreshold_Proc(
++	IN  PRTMP_ADAPTER    pAd,
++	IN  RTMP_STRING *arg)
++{
++	POS_COOKIE pObj = (POS_COOKIE) pAd->OS_Cookie;
++	UCHAR           apidx = pObj->ioctl_if;
++	UINT j;
++	CHAR rssi;
++
++	rssi = os_str_tol(arg, 0, 10);
++
++	if (rssi == 0)
++		MTWF_DBG(pAd, DBG_CAT_CFG, DBG_SUBCAT_ALL, DBG_LVL_INFO, "Disable SteeringThreshold Function\n");
++	else if (rssi > 0 || rssi < -100) {
++		MTWF_DBG(pAd, DBG_CAT_CFG, DBG_SUBCAT_ALL, DBG_LVL_ERROR, "SteeringThreshold Value Error.\n");
++		return FALSE;
++	}
++
++	pAd->ApCfg.MBSSID[apidx].SteeringThreshold = rssi;
++	MTWF_DBG(pAd, DBG_CAT_CFG, DBG_SUBCAT_ALL, DBG_LVL_INFO, "I/F(ra%d) SteeringThreshold=%d\n", apidx,
++			 pAd->ApCfg.MBSSID[apidx].SteeringThreshold);
++
++	for (j = BSS0; j < pAd->ApCfg.BssidNum; j++)
++		MTWF_DBG(pAd, DBG_CAT_CFG, DBG_SUBCAT_ALL, DBG_LVL_INFO, "%d. ==> %d\n", j, pAd->ApCfg.MBSSID[j].SteeringThreshold);
++
++	return TRUE;
++}
++#endif /* BAND_STEERING */
++
+ /*
+     ==========================================================================
+     Description:
+diff -u -r a/mt_wifi/embedded/include/band_steering.h b/mt_wifi/embedded/include/band_steering.h
+--- a/mt_wifi/embedded/include/band_steering.h	2025-08-22 08:37:31.031232560 +0000
++++ b/mt_wifi/embedded/include/band_steering.h	2025-08-22 08:48:30.742387043 +0000
+@@ -28,6 +28,15 @@
+ INT Show_BndStrg_Info(PRTMP_ADAPTER pAd, RTMP_STRING *arg);
+ INT Set_BndStrg_Enable(PRTMP_ADAPTER pAd, RTMP_STRING *arg);
+ INT Set_BndStrg_Param(PRTMP_ADAPTER pAd, RTMP_STRING *arg);
++
++#define NETLINK_STEERING 30
++#define STEERING_GROUP 1
++
++struct steering_event_data {
++    char if_name[IFNAMSIZ];
++    unsigned char sta_addr[ETH_ALEN];
++};
++
+ #ifdef BND_STRG_DBG
+ INT Set_BndStrg_MonitorAddr(PRTMP_ADAPTER	pAd, RTMP_STRING *arg);
+ #endif /* BND_STRG_DBG */
+diff -u -r a/mt_wifi/embedded/include/rt_config.h b/mt_wifi/embedded/include/rt_config.h
+--- a/mt_wifi/embedded/include/rt_config.h	2025-08-22 08:37:31.147232892 +0000
++++ b/mt_wifi/embedded/include/rt_config.h	2025-08-22 08:49:20.122687793 +0000
+@@ -44,6 +44,9 @@
+ 
+ #ifdef CONFIG_AP_SUPPORT
+ #ifdef BAND_STEERING
++#include <linux/netlink.h>
++#include <linux/skbuff.h>
++#include <net/sock.h>
+ #include "band_steering_def.h"
+ #endif /* BAND_STEERING */
+ /* #ifdef VOW_SUPPORT */
+diff -u -r a/mt_wifi/embedded/include/rtmp.h b/mt_wifi/embedded/include/rtmp.h
+--- a/mt_wifi/embedded/include/rtmp.h	2025-08-22 08:37:32.103235638 +0000
++++ b/mt_wifi/embedded/include/rtmp.h	2025-08-22 08:50:32.351136934 +0000
+@@ -2980,6 +2980,10 @@
+ 	CHAR AssocReqRssiThreshold;
+ 	CHAR RssiLowForStaKickOut;
+ 
++#ifdef BAND_STEERING
++	CHAR SteeringThreshold;
++#endif /* BAND_STEERING */
++
+ #ifdef CUSTOMER_VENDOR_IE_SUPPORT
+ 	/*For AP vendor ie*/
+ 	struct customer_vendor_ie ap_vendor_ie;
+@@ -7691,6 +7695,10 @@
+ 	BOOLEAN Warp512Support;
+ #endif
+ 
++#ifdef BAND_STEERING
++	struct sock *netlink_sock;
++#endif
++
+ 	/*About MacTab, the sta driver will use #0 and #1 for multicast and AP. */
+ 	MAC_TABLE MacTab;	/* ASIC on-chip WCID entry table.  At TX, ASIC always use key according to this on-chip table. */
+ 	NDIS_SPIN_LOCK MacTabLock;
