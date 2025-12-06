@@ -127,6 +127,7 @@ mtk_facrory_write_mac_firmware()
 			i=$((i+1))
 		done
 		printf "${data}" | dd conv=notrunc of=/lib/firmware/MT7981_iPAiLNA_EEPROM.bin bs=1 seek=$((${offset}))
+        printf "${data}" | dd conv=notrunc of=/lib/firmware/e2p bs=1 seek=$((${offset}))
 	fi
 }
 
