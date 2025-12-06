@@ -2146,7 +2146,7 @@ int mtk_sw_nat_hook_tx(struct sk_buff *skb, int gmac_no)
 				bfib1_tx.vlan_layer = 1;
 				entry->ipv6_5t_route.etype = htons(HQOS_MAGIC_TAG);
 				entry->ipv6_5t_route.vlan1 = skb_hnat_entry(skb);
-				entry->ipv6_5t_route.iblk2.fqos = 1;
+				entry->ipv6_5t_route.iblk2.fqos = (dscp != 0) ? 1 : 0;
 			}
 		}
 		entry->ipv6_5t_route.iblk2.dp = gmac_no;
