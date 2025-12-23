@@ -305,6 +305,10 @@ define MT_WIFI_SRC_PATCH
 		echo "Fixup new mcu fw API"; \
 		patch -p1 -d $(PKG_BUILD_DIR) < ./files/fix-new-mcu-fw-api.patch; \
 	fi
+    @if [ "$$(CONFIG_MTK_MT7986_NEW_FW)" = "y" ]; then \
+		echo "Fixup eeprom reading API"; \
+		patch -p1 -d $(PKG_BUILD_DIR) < ./files/eeprom-flash-api.patch; \
+    fi
 endef
 
 Hooks/Prepare/Post := MT_WIFI_SRC_PATCH
@@ -329,6 +333,7 @@ define KernelPackage/mt_wifi/install
 	fi ; \
 	if [ "$$(CONFIG_MTK_CHIP_MT7981)" = "y" ] ; then \
 		$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/mt7981/rebb/MT7981_* $(1)/lib/firmware/; \
+        $(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/mt7981/rebb/e2p $(1)/lib/firmware/; \
 	fi ; \
 	if [ "$$(CONFIG_MTK_WIFI_FW_BIN_LOAD)" = "y" ]; then \
 		if [ "$$(CONFIG_MTK_CHIP_MT7986)" = "y" ] ; then \
