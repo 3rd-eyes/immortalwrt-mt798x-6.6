@@ -23,74 +23,74 @@ if MTK_WIFI_DRIVER
 choice
 	prompt "Choose First WiFi Interface"
 	config MTK_FIRST_IF_NONE
-		bool "None"
+	bool "None"
 
 	config MTK_FIRST_IF_MT7615E
-		bool "MT7615E"
-		select MTK_WIFI_MT_MAC
-		select MTK_MT_MAC
-		select MTK_CHIP_MT7615E
+	bool "MT7615E"
+	select MTK_WIFI_MT_MAC
+	select MTK_MT_MAC
+	select MTK_CHIP_MT7615E
 
 	config MTK_FIRST_IF_MT7622
-		bool "MT7622"
-		select MTK_WIFI_MT_MAC
-		select MTK_MT_MAC
-		select MTK_CHIP_MT7622
+	bool "MT7622"
+	select MTK_WIFI_MT_MAC
+	select MTK_MT_MAC
+	select MTK_CHIP_MT7622
 
 	config MTK_FIRST_IF_MT7626
-		bool "MT7626"
-		select MTK_WIFI_MT_MAC
-		select MTK_MT_MAC
-		select MTK_CHIP_MT7626
+	bool "MT7626"
+	select MTK_WIFI_MT_MAC
+	select MTK_MT_MAC
+	select MTK_CHIP_MT7626
 
 	config MTK_FIRST_IF_AXE
-    	bool "MT6867"
-    	select MTK_WIFI_MT_MAC
-    	select MTK_MT_MAC
-    	select MTK_CHIP_AXE
+        bool "MT6867"
+        select MTK_WIFI_MT_MAC
+        select MTK_MT_MAC
+        select MTK_CHIP_AXE
 
 	config MTK_FIRST_IF_MT7915
-    	bool "MT7915"
-    	select MTK_WIFI_MT_MAC
-    	select MTK_MT_MAC
-    	select MTK_CHIP_MT7915
+        bool "MT7915"
+        select MTK_WIFI_MT_MAC
+        select MTK_MT_MAC
+        select MTK_CHIP_MT7915
 
 	config MTK_FIRST_IF_MT7986
-    	bool "MT7986"
-    	select MTK_WIFI_MT_MAC
-    	select MTK_MT_MAC
-    	select MTK_CHIP_MT7986
+        bool "MT7986"
+        select MTK_WIFI_MT_MAC
+        select MTK_MT_MAC
+        select MTK_CHIP_MT7986
 	
 	config MTK_FIRST_IF_MT7916
-    	bool "MT7916"
-    	select MTK_WIFI_MT_MAC
-    	select MTK_MT_MAC
-    	select MTK_CHIP_MT7916
+        bool "MT7916"
+        select MTK_WIFI_MT_MAC
+        select MTK_MT_MAC
+        select MTK_CHIP_MT7916
 
-    config MTK_FIRST_IF_MT7981
-    	bool "MT7981"
-    	select MTK_WIFI_MT_MAC
-    	select MTK_MT_MAC
-    	select MTK_CHIP_MT7981
+        config MTK_FIRST_IF_MT7981
+        bool "MT7981"
+        select MTK_WIFI_MT_MAC
+        select MTK_MT_MAC
+        select MTK_CHIP_MT7981
 
 endchoice
 
 choice
 	prompt "Choose Second WiFi Interface"
 	config MTK_SECOND_IF_NONE
-		bool "None"
+	bool "None"
 
 	config MTK_SECOND_IF_MT7615E
-		bool "MT7615E"
-		select MTK_WIFI_MT_MAC
-		select MTK_CHIP_MT7615E
-		select MTK_MULTI_INF_SUPPORT
+	bool "MT7615E"
+	select MTK_WIFI_MT_MAC
+	select MTK_CHIP_MT7615E
+	select MTK_MULTI_INF_SUPPORT
 
 	config MTK_SECOND_IF_AXE
-		bool "MT6867"
-		select MTK_WIFI_MT_MAC
-		select MTK_MT_MAC
-		select MTK_CHIP_AXE
+	bool "MT6867"
+	select MTK_WIFI_MT_MAC
+	select MTK_MT_MAC
+	select MTK_CHIP_AXE
 
 	config MTK_SECOND_IF_MT7915
         bool "MT7915"
@@ -109,63 +109,63 @@ endchoice
 choice
 	prompt "Choose Third WiFi Interface"
 	config MTK_THIRD_IF_NONE
-		bool "None"
+	bool "None"
 
 	config MTK_THIRD_IF_MT7615E
-		bool "MT7615E"
-		select MTK_WIFI_MT_MAC
-		select MTK_CHIP_MT7615E
-		select MTK_MULTI_INF_SUPPORT
+	bool "MT7615E"
+	select MTK_WIFI_MT_MAC
+	select MTK_CHIP_MT7615E
+	select MTK_MULTI_INF_SUPPORT
 
 	config MTK_THIRD_IF_MT7915
         bool "MT7915"
         select MTK_WIFI_MT_MAC
         select MTK_MT_MAC
         select MTK_CHIP_MT7915
-		select MTK_MULTI_INF_SUPPORT
+	select MTK_MULTI_INF_SUPPORT
 
     config MTK_THIRD_IF_MT7916
         bool "MT7916"
         select MTK_WIFI_MT_MAC
         select MTK_MT_MAC
         select MTK_CHIP_MT7916
-		select MTK_MULTI_INF_SUPPORT
+	select MTK_MULTI_INF_SUPPORT
 	
 endchoice
 
 config  MTK_RT_FIRST_CARD
-    int
-    depends on ! MTK_FIRST_IF_NONE
+        int
+        depends on ! MTK_FIRST_IF_NONE
 	default 7615 if MTK_FIRST_IF_MT7615E
-    default 7622 if MTK_FIRST_IF_MT7622
-    default 7626 if MTK_FIRST_IF_MT7626
-    default 6867 if MTK_FIRST_IF_AXE
+        default 7622 if MTK_FIRST_IF_MT7622
+        default 7626 if MTK_FIRST_IF_MT7626
+        default 6867 if MTK_FIRST_IF_AXE
 
 config  MTK_RT_SECOND_CARD
-    int
-    depends on ! MTK_SECOND_IF_NONE
-    default 7615 if MTK_SECOND_IF_MT7615E
-    default 6867 if MTK_SECOND_IF_AXE
+        int
+        depends on ! MTK_SECOND_IF_NONE
+        default 7615 if MTK_SECOND_IF_MT7615E
+        default 6867 if MTK_SECOND_IF_AXE
 
 config  MTK_RT_THIRD_CARD
-    int
-    depends on ! MTK_THIRD_IF_NONE
-    default 7615 if MTK_THIRD_IF_MT7615E
+        int
+        depends on ! MTK_THIRD_IF_NONE
+        default 7615 if MTK_THIRD_IF_MT7615E
 
 config  MTK_RT_FIRST_IF_RF_OFFSET
-    hex
-    depends on ! MTK_FIRST_IF_NONE
-    default 0xc0000
+        hex
+        depends on ! MTK_FIRST_IF_NONE
+        default 0xc0000
 
 config  MTK_RT_SECOND_IF_RF_OFFSET
-    hex
-    depends on ! MTK_SECOND_IF_NONE
-    default 0xc8000
+        hex
+        depends on ! MTK_SECOND_IF_NONE
+        default 0xc8000
 
 config  MTK_RT_THIRD_IF_RF_OFFSET
-    hex
-    depends on ! MTK_THIRD_IF_NONE
-    default 0xd0000
+        hex
+        depends on ! MTK_THIRD_IF_NONE
+        default 0xd0000
 
 config MTK_MT_WIFI
 	tristate "MT WIFI Driver"
@@ -179,94 +179,98 @@ config MTK_MT_WIFI_PATH
 if MTK_MT_WIFI
 choice
 	prompt "MT_WIFI DRIVER VERSION"
-	default MTK_MT_WIFI_DRIVER_VERSION_7672
+	default MTK_MT_WIFI_DRIVER_VERSION_7673
 
 	config MTK_MT_WIFI_DRIVER_VERSION_7661
-		bool "7.6.6.1"
+	bool "7.6.6.1"
 
 	config MTK_MT_WIFI_DRIVER_VERSION_7672
-		bool "7.6.7.2"
+	bool "7.6.7.2"
+
+	config MTK_MT_WIFI_DRIVER_VERSION_7673
+	bool "7.6.7.3"
 endchoice
 
 choice
 	prompt "MT7916 custom WACPU firmware"
 	depends on MTK_CHIP_MT7916
-	default MTK_MT_WIFI_MT7916_20240823
+	default MTK_MT_WIFI_MT7916_20250408
 
 	config MTK_MT_WIFI_MT7916_DEFAULT_FIRMWARE
-		bool "default firmware"
+	bool "default firmware"
 
 	config MTK_MT_WIFI_MT7916_20221208
-		bool "mt7916-fw-20221208"
+	bool "mt7916-fw-20221208"
 
 	config MTK_MT_WIFI_MT7916_20240823
-		bool "mt7916-fw-20240823"
+	bool "mt7916-fw-20240823"
+
+	config MTK_MT_WIFI_MT7916_20250408
+	bool "mt7916-fw-20250408"
 endchoice
 
 choice
 	prompt "MT7981 custom WACPU firmware"
 	depends on MTK_CHIP_MT7981
-	default MTK_MT_WIFI_MT7981_20240823
+	default MTK_MT_WIFI_MT7981_20250408
 
 	config MTK_MT_WIFI_MT7981_DEFAULT_FIRMWARE
-		bool "default firmware"
+	bool "default firmware"
 
 	config MTK_MT_WIFI_MT7981_20230306
-		bool "mt7981-fw-20230306"
+	bool "mt7981-fw-20230306"
 
 	config MTK_MT_WIFI_MT7981_20230330
-		bool "mt7981-fw-20230330"
+	bool "mt7981-fw-20230330"
 
 	config MTK_MT_WIFI_MT7981_20230411
-		bool "mt7981-fw-20230411"
+	bool "mt7981-fw-20230411"
 
 	config MTK_MT_WIFI_MT7981_20230717
-		bool "mt7981-fw-20230717"
+	bool "mt7981-fw-20230717"
 
 	config MTK_MT_WIFI_MT7981_20231024
-		bool "mt7981-fw-20231024"
-
-	config MTK_MT_WIFI_MT7981_20240613
-		bool "mt7981-fw-20240613"
+	bool "mt7981-fw-20231024"
 
 	config MTK_MT_WIFI_MT7981_20240823
-		bool "mt7981-fw-20240823"
+	bool "mt7981-fw-20240823"
 
-	config MTK_MT_WIFI_MT7981_asus-ax57
-		bool "mt7981-fw-asus-ax57"
+	config MTK_MT_WIFI_MT7981_20250408
+	bool "mt7981-fw-20250408"
 endchoice
 
 choice
 	prompt "MT7986 custom WACPU firmware"
 	depends on MTK_CHIP_MT7986
-	default MTK_MT_WIFI_MT7986_20240823
+	default MTK_MT_WIFI_MT7986_20250408
 
 	config MTK_MT_WIFI_MT7986_DEFAULT_FIRMWARE
-		bool "default firmware"
+	bool "default firmware"
 
 	config MTK_MT_WIFI_MT7986_20221208
-		bool "mt7986-fw-20221208"
+	bool "mt7986-fw-20221208"
 
 	config MTK_MT_WIFI_MT7986_20230421
-		bool "mt7986-fw-20230421"
+	bool "mt7986-fw-20230421"
 
 	config MTK_MT_WIFI_MT7986_20230808
-		bool "mt7986-fw-20230808"
+	bool "mt7986-fw-20230808"
 
 	config MTK_MT_WIFI_MT7986_20231024
-		bool "mt7986-fw-20231024"
+	bool "mt7986-fw-20231024"
 
 	config MTK_MT_WIFI_MT7986_20240823
-		bool "mt7986-fw-20240823"
+	bool "mt7986-fw-20240823"
 
-	config MTK_MT_WIFI_MT7986_asus-ax6000
-		bool "mt7986-fw-asus-ax6000"
+	config MTK_MT_WIFI_MT7986_20250408
+	bool "mt7986-fw-20250408"
 endchoice
 
 config MTK_MT_WIFI_FIRMWARE_PATH_MT7916
 	string
 	default mt7916-fw-20221208 if MTK_MT_WIFI_MT7916_20221208
 	default mt7916-fw-20240823 if MTK_MT_WIFI_MT7916_20240823
+	default mt7916-fw-20250408 if MTK_MT_WIFI_MT7916_20250408
 
 config MTK_MT_WIFI_FIRMWARE_PATH_MT7981
 	string
@@ -275,9 +279,8 @@ config MTK_MT_WIFI_FIRMWARE_PATH_MT7981
 	default mt7981-fw-20230411 if MTK_MT_WIFI_MT7981_20230411
 	default mt7981-fw-20230717 if MTK_MT_WIFI_MT7981_20230717
 	default mt7981-fw-20231024 if MTK_MT_WIFI_MT7981_20231024
-	default mt7981-fw-20240613 if MTK_MT_WIFI_MT7981_20240613
 	default mt7981-fw-20240823 if MTK_MT_WIFI_MT7981_20240823
-	default mt7981-fw-asus-ax57 if MTK_MT_WIFI_MT7981_asus-ax57
+	default mt7981-fw-20250408 if MTK_MT_WIFI_MT7981_20250408
 
 config MTK_MT_WIFI_FIRMWARE_PATH_MT7986
 	string
@@ -286,7 +289,7 @@ config MTK_MT_WIFI_FIRMWARE_PATH_MT7986
 	default mt7986-fw-20230808 if MTK_MT_WIFI_MT7986_20230808
 	default mt7986-fw-20231024 if MTK_MT_WIFI_MT7986_20231024
 	default mt7986-fw-20240823 if MTK_MT_WIFI_MT7986_20240823
-	default mt7986-fw-asus-ax6000 if MTK_MT_WIFI_MT7986_asus-ax6000
+	default mt7986-fw-20250408 if MTK_MT_WIFI_MT7986_20250408
 
 config MTK_FW_NEW_API_PATCH
 	bool
@@ -299,13 +302,13 @@ choice
 	depends on ! MTK_FIRST_IF_NONE
 
 	config MTK_FIRST_IF_EEPROM_FLASH
-		bool "FLASH"
+	bool "FLASH"
 	
 	config MTK_FIRST_IF_EEPROM_PROM
-		bool "EEPROM"
+	bool "EEPROM"
 
 	config MTK_FIRST_IF_EEPROM_EFUSE
-		bool "EFUSE"
+	bool "EFUSE"
 
 endchoice
 
@@ -321,13 +324,13 @@ choice
 	depends on ! MTK_SECOND_IF_NONE
 
 	config MTK_SECOND_IF_EEPROM_FLASH
-		bool "FLASH"
+	bool "FLASH"
 
 	config MTK_SECOND_IF_EEPROM_PROM
-		bool "EEPROM"
+	bool "EEPROM"
 
 	config MTK_SECOND_IF_EEPROM_EFUSE
-		bool "EFUSE"
+	bool "EFUSE"
 
 endchoice
 
@@ -339,26 +342,26 @@ config MTK_RT_SECOND_CARD_EEPROM
 	default "flash" if MTK_SECOND_IF_EEPROM_FLASH
 
 choice
-	prompt "EEPROM Type of 3th Card"
-	depends on ! MTK_THIRD_IF_NONE
+		prompt "EEPROM Type of 3th Card"
+		depends on ! MTK_THIRD_IF_NONE
 
-	config MTK_THIRD_IF_EEPROM_FLASH
+		config MTK_THIRD_IF_EEPROM_FLASH
 		bool "FLASH"
 
-	config MTK_THIRD_IF_EEPROM_PROM
+		config MTK_THIRD_IF_EEPROM_PROM
 		bool "EEPROM"
 
-	config MTK_THIRD_IF_EEPROM_EFUSE
+		config MTK_THIRD_IF_EEPROM_EFUSE
 		bool "EFUSE"
 
 endchoice
 
 config MTK_RT_THIRD_CARD_EEPROM
-	string
-	depends on ! MTK_THIRD_IF_NONE
-	default "prom" if MTK_THIRD_IF_EEPROM_PROM
-	default "efuse" if MTK_THIRD_IF_EEPROM_EFUSE
-	default "flash" if MTK_THIRD_IF_EEPROM_FLASH
+		string
+		depends on ! MTK_THIRD_IF_NONE
+		default "prom" if MTK_THIRD_IF_EEPROM_PROM
+		default "efuse" if MTK_THIRD_IF_EEPROM_EFUSE
+		default "flash" if MTK_THIRD_IF_EEPROM_FLASH
 	
 config MTK_MULTI_INF_SUPPORT
 	bool
@@ -471,14 +474,14 @@ config MTK_SMART_CARRIER_SENSE_SUPPORT
 	default y
 
 config MTK_THERMAL_PROTECT_SUPPORT
-    bool "THERMAL PROTECT SUPPORT"
-    depends on MTK_WIFI_DRIVER && MTK_SMART_CARRIER_SENSE_SUPPORT
-    default n
+        bool "THERMAL PROTECT SUPPORT"
+        depends on MTK_WIFI_DRIVER && MTK_SMART_CARRIER_SENSE_SUPPORT
+        default n
 
 config MTK_SCS_FW_OFFLOAD
-    bool "SCS FW OFFLOAD Support"
-    depends on MTK_WIFI_DRIVER && MTK_SMART_CARRIER_SENSE_SUPPORT
-    default n
+        bool "SCS FW OFFLOAD Support"
+        depends on MTK_WIFI_DRIVER && MTK_SMART_CARRIER_SENSE_SUPPORT
+        default n
 
 config MTK_MT_DFS_SUPPORT
 	bool "Dynamic Frequency Selection Support"
@@ -514,9 +517,9 @@ config MTK_DBDC_MODE
 	default y
 
 config MTK_MULTI_PROFILE_SUPPORT
-    bool "Multi Profile Support"
-    depends on MTK_DBDC_MODE
-    default y
+        bool "Multi Profile Support"
+        depends on MTK_DBDC_MODE
+        default y
 
 config MTK_DEFAULT_5G_PROFILE
 	bool "5G default profile for DBDC"
@@ -625,7 +628,7 @@ config MTK_RPS_EFFICIENCY
 #	depends on MT_AP_SUPPORT
 #	default n
 #	help
-#		Support Net interface block while Tx-Sw queue full
+#	Support Net interface block while Tx-Sw queue full
 
 #config RATE_ADAPTION
 #	bool "New Rate Adaptation support"
@@ -713,9 +716,9 @@ config MTK_ATE_SUPPORT
 	default y
 
 config MTK_WLAN_SERVICE
-    bool "Wlan Service Library Support"
-    depends on MTK_WIFI_DRIVER
-    default n
+        bool "Wlan Service Library Support"
+        depends on MTK_WIFI_DRIVER
+        default n
 
 #config MTK_MEMORY_OPTIMIZATION
 #	bool "Memory Optimization"
@@ -730,14 +733,14 @@ config MTK_PASSPOINT_R2
 	default n
 
 config MTK_MBO_SUPPORT
-    bool "MBO Support"
-    depends on MTK_WIFI_DRIVER
-    select MTK_INTERWORKING
-    select MTK_WNM_SUPPORT
-    select MTK_DOT11K_RRM_SUPPORT
-    select MTK_DOT11R_FT_SUPPORT
-    select MTK_DOT11W_PMF_SUPPORT
-    default n
+        bool "MBO Support"
+        depends on MTK_WIFI_DRIVER
+        select MTK_INTERWORKING
+        select MTK_WNM_SUPPORT
+        select MTK_DOT11K_RRM_SUPPORT
+        select MTK_DOT11R_FT_SUPPORT
+        select MTK_DOT11W_PMF_SUPPORT
+        default n
 
 config MTK_OCE_SUPPORT
 	bool "Optimized Connectivity Experience Support"
@@ -761,36 +764,36 @@ config MTK_SW_CONNECT_SUPPORT
 	default n
 
 config MTK_MAP_SUPPORT
-    bool "MAP Support"
-    depends on MTK_WIFI_DRIVER
-    select MTK_INTERWORKING
-    select MTK_WNM_SUPPORT
-    select MTK_DOT11K_RRM_SUPPORT
-    select MTK_DOT11R_FT_SUPPORT
-    select MTK_DOT11W_PMF_SUPPORT
-    default n
+        bool "MAP Support"
+        depends on MTK_WIFI_DRIVER
+        select MTK_INTERWORKING
+        select MTK_WNM_SUPPORT
+        select MTK_DOT11K_RRM_SUPPORT
+        select MTK_DOT11R_FT_SUPPORT
+        select MTK_DOT11W_PMF_SUPPORT
+        default n
 
 config MTK_MAP_R2_VER_SUPPORT
-    bool "Multi-AP R2 version support"
-    depends on MTK_MAP_SUPPORT
-    default n
+        bool "Multi-AP R2 version support"
+        depends on MTK_MAP_SUPPORT
+        default n
 
 config MTK_MAP_R3_VER_SUPPORT
-    bool "Multi-AP R3 version support"
-    depends on MTK_MAP_SUPPORT
-    depends on MTK_MAP_R2_VER_SUPPORT
-    default n
+        bool "Multi-AP R3 version support"
+        depends on MTK_MAP_SUPPORT
+        depends on MTK_MAP_R2_VER_SUPPORT
+        default n
 
 config MTK_MAP_R2_6E_SUPPORT
 	bool "Multi-AP R2 6E support"
-    depends on MTK_MAP_SUPPORT
-    default n
+        depends on MTK_MAP_SUPPORT
+        default n
 
 config MTK_MAP_R3_6E_SUPPORT
 	bool "Multi-AP R3 6E support"
-    depends on MTK_MAP_SUPPORT
-    depends on MTK_MAP_R2_6E_SUPPORT
-    default n
+        depends on MTK_MAP_SUPPORT
+        depends on MTK_MAP_R2_6E_SUPPORT
+        default n
 
 #config TRACE_TCP_PKT
 #	   bool "TCP DATA/ACK packets trace log"
@@ -811,17 +814,17 @@ config MTK_TCP_RACK_SUPPORT
 #### PA_LNA_Type choice
 
 config MTK_RED_SUPPORT
-    bool "RED(Random Early Drop) support"
+        bool "RED(Random Early Drop) support"
 	depends on MTK_WIFI_DRIVER
 	depends on MTK_MT_AP_SUPPORT || MTK_MT_STA_SUPPORT
-    default y
+        default y
 
 config MTK_FQ_SCH_SUPPORT
-    bool "Fair Queueing support"
-    depends on MTK_WIFI_DRIVER
-    depends on MTK_MT_AP_SUPPORT && MTK_VOW_SUPPORT
-    depends on MTK_CHIP_MT7622
-    default y
+        bool "Fair Queueing support"
+        depends on MTK_WIFI_DRIVER
+        depends on MTK_MT_AP_SUPPORT && MTK_VOW_SUPPORT
+        depends on MTK_CHIP_MT7622
+        default y
 
 config MTK_CTXD_MEM_CPY_SUPPORT
 	bool "CTXD(sw mode) support"
@@ -829,70 +832,70 @@ config MTK_CTXD_MEM_CPY_SUPPORT
 	default n
 
 config MTK_CTXD_SCATTER_AND_GATHER_SUPPORT
-    bool "CTXD(hw mode) support"
-    depends on MTK_WIFI_DRIVER
-    default n
+        bool "CTXD(hw mode) support"
+        depends on MTK_WIFI_DRIVER
+        default n
 
 config MTK_FDB_SUPPORT
-    bool "FW Debug Port"
-    depends on MTK_WIFI_DRIVER
-    default n
+       bool "FW Debug Port"
+       depends on MTK_WIFI_DRIVER
+       default n
 
 choice
-    prompt "PA LNA Type of 1st Card"
-	depends on ! MTK_FIRST_IF_NONE
+        prompt "PA LNA Type of 1st Card"
+		depends on ! MTK_FIRST_IF_NONE
 		
-	config MTK_FIRST_IF_EPAELNA
+		config MTK_FIRST_IF_EPAELNA
 		bool "ePAeLNA"
-	config MTK_FIRST_IF_IPAILNA
+		config MTK_FIRST_IF_IPAILNA
 		bool "iPAiLNA"		
-	config MTK_FIRST_IF_IPAELNA
+		config MTK_FIRST_IF_IPAELNA
 		bool "iPAeLNA"
-#	config MTK_FIRST_IF_EPAILNA
+#		config MTK_FIRST_IF_EPAILNA
 #		bool "ePAiLNA"
 endchoice
 choice
-    prompt "PA LNA Type of 2nd Card"
-	depends on ! MTK_SECOND_IF_NONE
+        prompt "PA LNA Type of 2nd Card"
+		depends on ! MTK_SECOND_IF_NONE
 		
-	config MTK_SECOND_IF_EPAELNA
+		config MTK_SECOND_IF_EPAELNA
 		bool "ePAeLNA"
-	config MTK_SECOND_IF_IPAILNA
+		config MTK_SECOND_IF_IPAILNA
 		bool "iPAiLNA"		
-	config MTK_SECOND_IF_IPAELNA
+		config MTK_SECOND_IF_IPAELNA
 		bool "iPAeLNA"
-#	config MTK_SECOND_IF_EPAILNA
+#		config MTK_SECOND_IF_EPAILNA
 #		bool "ePAiLNA"
 endchoice
 choice
-    prompt "PA LNA Type of 3rd Card"
-	depends on ! MTK_THIRD_IF_NONE
+        prompt "PA LNA Type of 3rd Card"
+		depends on ! MTK_THIRD_IF_NONE
 		
-	config MTK_THIRD_IF_EPAELNA
+		config MTK_THIRD_IF_EPAELNA
 		bool "ePAeLNA"
-	config MTK_THIRD_IF_IPAILNA
+		config MTK_THIRD_IF_IPAILNA
 		bool "iPAiLNA"		
-	config MTK_THIRD_IF_IPAELNA
+		config MTK_THIRD_IF_IPAELNA
 		bool "iPAeLNA"
-#	config MTK_THIRD_IF_EPAILNA
+#		config MTK_THIRD_IF_EPAILNA
 #		bool "ePAiLNA"
 endchoice
 #### PA_LNA_Type choice END 
 
 config MTK_WIFI_FW_BIN_LOAD
-    depends on MTK_CHIP_MT7986 || MTK_CHIP_MT7916 || MTK_CHIP_MT7981
-    bool "Load WIFI FW With BIN File"
-    default n
+       depends on MTK_CHIP_MT7986 || MTK_CHIP_MT7916 || MTK_CHIP_MT7981
+       bool "load wifi fw with bin file"
+       default n
 
 config MTK_WIFI_SKU_TYPE
-    depends on MTK_CHIP_MT7986
-    string "Panther SKU Type : AX6000 or AX7800 or SADBDC"
-    default "AX6000"
+       depends on MTK_CHIP_MT7986
+       string "Panther SKU Type : AX6000 or AX7800 or SADBDC"
+       default "AX6000"
 
 config MTK_WIFI_ADIE_TYPE
-    depends on MTK_CHIP_MT7986
-    string "Panther ADIE Type : mt7975 or mt7976"
-    default "mt7976"
+       depends on MTK_CHIP_MT7986
+       string "Panther ADIE Type : mt7975 or mt7976"
+       default "mt7976"
 
 #
 # Section for chip architectures
@@ -992,7 +995,7 @@ config MTK_APCLI_CERT_SUPPORT
 	bool "AP-Client TGn Cert Support"
 	depends on MTK_MT_AP_SUPPORT
 	depends on MTK_APCLI_SUPPORT
-    default n
+        default n
 
 config MTK_MAC_REPEATER_SUPPORT
 	bool "MAC Repeater Support"
@@ -1002,10 +1005,10 @@ config MTK_MAC_REPEATER_SUPPORT
 	default y
 
 config MTK_APCLI_CONNECTION_TRIAL
-    bool "Trial Connection"
-    depends on MTK_MT_AP_SUPPORT
-    depends on MTK_APCLI_SUPPORT
-    default n
+        bool "Trial Connection"
+        depends on MTK_MT_AP_SUPPORT
+        depends on MTK_APCLI_SUPPORT
+        default n
 
 config MTK_MWDS
     bool "Mixed WDS(MWDS)"
@@ -1019,10 +1022,10 @@ config MTK_WIFI_SYSDVT
     default n
 
 config MTK_MUMIMO_SUPPORT
-    bool "MU-MIMO Support"
-    depends on MTK_WIFI_DRIVER
-    select MTK_MU_RA_SUPPORT
-    default y
+        bool "MU-MIMO Support"
+        depends on MTK_WIFI_DRIVER
+        select MTK_MU_RA_SUPPORT
+        default y
 
 config MTK_MU_RA_SUPPORT
   	bool "MU-RGA Support"
@@ -1178,36 +1181,36 @@ config MTK_CUSTOMISED_HOSTAPD_SUPPORT
 
 #HOSTAPD_MAP_SUPPORT
 config MTK_HOSTAPD_MAP_SUPPORT
-    bool "Hostapd MAP Support"
-    depends on MTK_MT_AP_SUPPORT
-    depends on MTK_CFG80211_SUPPORT
-    default n
+        bool "Hostapd MAP Support"
+        depends on MTK_MT_AP_SUPPORT
+        depends on MTK_CFG80211_SUPPORT
+        default n
 
 #HOSTAPD_WAPP_SUPPORT
 config MTK_HOSTAPD_WAPP_SUPPORT
-    bool "Hostapd WAPP Support"
-    depends on MTK_MT_AP_SUPPORT
-    depends on MTK_CFG80211_SUPPORT
-    default n
+        bool "Hostapd WAPP Support"
+        depends on MTK_MT_AP_SUPPORT
+        depends on MTK_CFG80211_SUPPORT
+        default n
 
 #HOSTAPD_WPA3_SUPPORT
 config MTK_HOSTAPD_WPA3_SUPPORT
-    bool "Hostapd WPA3 Support"
-    depends on MTK_MT_AP_SUPPORT
-    depends on MTK_CFG80211_SUPPORT
-    default n
+        bool "Hostapd WPA3 Support"
+        depends on MTK_MT_AP_SUPPORT
+        depends on MTK_CFG80211_SUPPORT
+        default n
 
 #HOSTAPD_WPA3R3_SUPPORT
 config MTK_HOSTAPD_WPA3R3_SUPPORT
-    bool "Hostapd WPA3R3 Support"
-    depends on MTK_HOSTAPD_WPA3_SUPPORT
-    default n
+        bool "Hostapd WPA3R3 Support"
+        depends on MTK_HOSTAPD_WPA3_SUPPORT
+        default n
 
 #DBDC_ONE_BAND_SUPPORT
 config MTK_DBDC_ONE_BAND_SUPPORT
-    bool "Single Band DBDC Support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Single Band DBDC Support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 #APCLI STA
 config MTK_APCLI_STA_SUPPORT
@@ -1245,14 +1248,14 @@ config MTK_DSCP_PRI_SUPPORT
 	default n
 
 config MTK_MIN_PHY_RATE_SUPPORT
-    bool "Minimum PHY rate support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Minimum PHY rate support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_FAST_UP_RATE_SUPPORT
-    bool "Fast UP rate support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Fast UP rate support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_CON_WPS_SUPPORT
 	bool "Concurrent WPS Support"
@@ -1309,9 +1312,9 @@ config MTK_LED_CONTROL_SUPPORT
 	default n
 
 config MTK_WLAN_HOOK
-    bool "WLAN hook Support"
-    depends on MTK_WIFI_DRIVER
-    default n
+       bool "WLAN hook Support"
+       depends on MTK_WIFI_DRIVER
+       default n
 
 config MTK_RADIUS_ACCOUNTING_SUPPORT
 	bool "Radius Accounting Support"
@@ -1342,10 +1345,10 @@ config MTK_DFS_SLAVE_SUPPORT
 	default n
 
 config MTK_VENDOR_FEATURE11_SUPPORT
-    bool "Vendor11 Feature Enable"
-    depends on MTK_WIFI_DRIVER
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Vendor11 Feature Enable"
+        depends on MTK_WIFI_DRIVER
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_PCIE_ASPM_DYM_CTRL_SUPPORT
 	bool "Pcie Aspm Dynamic Control Support"
@@ -1368,19 +1371,19 @@ config MTK_EVENT_NOTIFIER_SUPPORT
 	default n
 
 config MTK_AIR_MONITOR
-    bool "Air Monitor"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Air Monitor"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_WNM_SUPPORT
-    bool "802.11v WNM Support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "802.11v WNM Support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_INTERWORKING
-    bool "802.11u Interworking"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "802.11u Interworking"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 #config ROAMING_ENHANCE_SUPPORT
 #	bool "Roaming Enhance Support"
@@ -1393,40 +1396,40 @@ config MTK_LINUX_NET_TXQ_SUPPORT
 	default n
 
 #config WIFI_FWD_SUPPORT
-#	bool "WiFi Forwarding Support"
-#	default n
+#        bool "WiFi Forwarding Support"
+#        default n
 
 config  MTK_WPA3_SUPPORT
-    bool "WPA3 Support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "WPA3 Support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config  MTK_OWE_SUPPORT
-    bool "Enhanced Open Support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Enhanced Open Support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config  MTK_SINGLE_SKU
-    bool "Single SKU Support"
-    depends on MTK_MT_AP_SUPPORT
-    default n
+        bool "Single SKU Support"
+        depends on MTK_MT_AP_SUPPORT
+        default n
 
 config MTK_PROFILING_SUPPORT
-    bool "WIFI Profiling Support"
-    default n
+        bool "WIFI Profiling Support"
+        default n
 
 config MTK_6G_SUPPORT
-    bool "WIFI 6G Support"
-    default n
-    help
-        Supporting 6GHz Wi-Fi
+        bool "WIFI 6G Support"
+        default n
+        help
+          Supporting 6GHz Wi-Fi
 
 config MTK_BSSMGR_CROSS_MODULE_SUPPORT
-    bool "WIFI 6G BSS Manager Cross Module Support"
-    depends on MTK_6G_SUPPORT
-    default n
-    help
-    	Supporting 6GHz Wi-Fi BSS Manager Cross Module
+        bool "WIFI 6G BSS Manager Cross Module Support"
+        depends on MTK_6G_SUPPORT
+        default n
+        help
+          Supporting 6GHz Wi-Fi BSS Manager Cross Module
 
 endmenu
 

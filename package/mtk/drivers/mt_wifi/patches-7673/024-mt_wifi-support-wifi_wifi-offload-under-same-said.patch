@@ -1,0 +1,24 @@
+From 2806544a5a38283c6e778fa0a91e955e27e9987e Mon Sep 17 00:00:00 2001
+From: padavanonly <83120842+padavanonly@users.noreply.github.com>
+Date: Fri, 19 Sep 2025 01:00:50 +0800
+Subject: [PATCH] mt_wifi:support wifi<->wifi offload under same said
+
+---
+ mt_wifi/embedded/ap/ap_data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mt_wifi/embedded/ap/ap_data.c b/mt_wifi/embedded/ap/ap_data.c
+index 523a5ba59b4..18403fd5a2c 100644
+--- a/mt_wifi/embedded/ap/ap_data.c
++++ b/mt_wifi/embedded/ap/ap_data.c
+@@ -3967,8 +3967,8 @@ INT ap_rx_pkt_foward(RTMP_ADAPTER *pAd, struct wifi_dev *wdev, PNDIS_PACKET pPac
+ 					but not to air if match following case:
+ 						a). pMbss->IsolateInterStaTraffic == TRUE
+ 				*/
+-				to_air = TRUE;
+-				to_os = FALSE;
++				to_os = TRUE;
++				to_air = FALSE;
+ 
+ 				if (pMbss->IsolateInterStaTraffic == 1)
+ 					to_air = FALSE;
