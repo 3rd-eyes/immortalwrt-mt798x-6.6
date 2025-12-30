@@ -69,9 +69,17 @@ msgstr "填写IP将启动AP模式（同网段不重复ip,需重启后生效.对�
 msgid "HNAT bind rate threshold (pps)"
 msgstr "HNAT连接速率绑定阈值(pps)"
 
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:249
+msgid "Enable HNAT counter update"
+msgstr "启用 HNAT 连接计数更新"
+
 #: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:184
 msgid "The smaller the threshold, the easier it is for the connection to be accelerated."
 msgstr "阈值越小，连接越容易被加速。"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:250
+msgid "Update HNAT counter to nf_conntrack. May impact performance."
+msgstr "HNAT 加速的连接计数将自动更新到 nf_conntrack。可能会轻微影响性能。"
 
 
 

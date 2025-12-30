@@ -1,7 +1,7 @@
 diff -u -r a/mt_wifi/embedded/ap/ap.c b/mt_wifi/embedded/ap/ap.c
 --- a/mt_wifi/embedded/ap/ap.c	2025-08-22 08:37:31.927235133 +0000
 +++ b/mt_wifi/embedded/ap/ap.c	2025-08-22 08:43:16.308634037 +0000
-@@ -629,6 +629,45 @@
+@@ -630,6 +630,45 @@
  	return TRUE;
  }
  
@@ -72,7 +72,7 @@ diff -u -r a/mt_wifi/embedded/ap/ap.c b/mt_wifi/embedded/ap/ap.c
  		if ( pEntry->RssiSample.Rssi_Updated && pMbss->RssiLowForStaKickOut &&
  			(avgRssi < pMbss->RssiLowForStaKickOut)) {
  			bDisconnectSta = TRUE;
-@@ -7090,6 +7147,17 @@
+@@ -7114,6 +7171,17 @@
  			ops->set_csi_cn_info(pAd, u1BandIdx);
  #endif /* WIFI_CSI_CN_INFO_SUPPORT */
  
@@ -90,7 +90,7 @@ diff -u -r a/mt_wifi/embedded/ap/ap.c b/mt_wifi/embedded/ap/ap.c
  	return NDIS_STATUS_SUCCESS;
  }
  
-@@ -7197,6 +7265,13 @@
+@@ -7221,6 +7289,13 @@
  	MulticastDLTableReset(pAd, &pAd->pMcastDLTable);
  #endif
  #endif /* IGMP_SNOOP_SUPPORT */
@@ -128,7 +128,7 @@ diff -u -r a/mt_wifi/embedded/ap/ap_cfg.c b/mt_wifi/embedded/ap/ap_cfg.c
  #ifdef ZERO_LOSS_CSA_SUPPORT
  	{"KickOffSta",					Set_KickOffSta_Proc},
  	{"KickOffTime",					Set_KickOffTime_Proc},
-@@ -14967,6 +14974,36 @@
+@@ -14977,6 +14984,36 @@
  	return TRUE;
  }
  
@@ -200,7 +200,7 @@ diff -u -r a/mt_wifi/embedded/include/rt_config.h b/mt_wifi/embedded/include/rt_
 diff -u -r a/mt_wifi/embedded/include/rtmp.h b/mt_wifi/embedded/include/rtmp.h
 --- a/mt_wifi/embedded/include/rtmp.h	2025-08-22 08:37:32.103235638 +0000
 +++ b/mt_wifi/embedded/include/rtmp.h	2025-08-22 08:50:32.351136934 +0000
-@@ -2980,6 +2980,10 @@
+@@ -2996,6 +2996,10 @@
  	CHAR AssocReqRssiThreshold;
  	CHAR RssiLowForStaKickOut;
  
@@ -211,7 +211,7 @@ diff -u -r a/mt_wifi/embedded/include/rtmp.h b/mt_wifi/embedded/include/rtmp.h
  #ifdef CUSTOMER_VENDOR_IE_SUPPORT
  	/*For AP vendor ie*/
  	struct customer_vendor_ie ap_vendor_ie;
-@@ -7691,6 +7695,10 @@
+@@ -7715,6 +7719,10 @@
  	BOOLEAN Warp512Support;
  #endif
  
