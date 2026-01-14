@@ -1,7 +1,5 @@
-Index: warp/warp_proc.c
-===================================================================
---- warp.orig/warp_proc.c
-+++ warp/warp_proc.c
+--- a/warp_proc.c
++++ b/warp_proc.c
 @@ -452,6 +452,11 @@ warp_proc_ctrl_write(struct file *file,
  	char *s = value;
  	struct warp_entry *warp = (struct warp_entry *)PDE_DATA(file_inode(file));
@@ -14,10 +12,8 @@ Index: warp/warp_proc.c
  	if (buff && !copy_from_user(value, buff, len1)) {
  		token = strsep(&s, " ");
  		if(!token)
-Index: warp/wdma.c
-===================================================================
---- warp.orig/wdma.c
-+++ warp/wdma.c
+--- a/wdma.c
++++ b/wdma.c
 @@ -65,6 +65,11 @@ dump_rx_ring_raw(struct wdma_entry *wdma
  	struct warp_ring *ring = &wdma->res_ctrl.rx_ctrl.rx_ring_ctrl.ring[ring_id];
  	u8 *addr;

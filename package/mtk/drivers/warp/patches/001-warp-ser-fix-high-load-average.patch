@@ -1,6 +1,5 @@
-diff -rupw warp/warp_ser.c warp-new/warp_ser.c
---- warp/warp_ser.c	2022-04-25 17:09:39.000000000 +0800
-+++ warp-new/warp_ser.c	2022-10-23 01:33:00.447263140 +0800
+--- a/warp_ser.c
++++ b/warp_ser.c
 @@ -287,7 +287,7 @@ wed_ser_task(void *data)
  
  	while (!kthread_should_stop()) {
