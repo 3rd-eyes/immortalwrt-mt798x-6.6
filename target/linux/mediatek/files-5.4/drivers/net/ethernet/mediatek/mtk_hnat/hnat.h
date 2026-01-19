@@ -23,6 +23,8 @@
 /*--------------------------------------------------------------------------*/
 /* Register Offset*/
 /*--------------------------------------------------------------------------*/
+#define MTK_QDMA_TX_NUM		64
+#define MTK_QDMA_TX_MASK	((MTK_QDMA_TX_NUM) - 1)	
 #define PPE_GLO_CFG 0x00
 #define PPE_FLOW_CFG 0x04
 #define PPE_IP_PROT_CHK 0x08
@@ -104,7 +106,16 @@
 
 #define GDMA1_FWD_CFG 0x500
 #define GDMA2_FWD_CFG 0x1500
-
+#if defined(CONFIG_MEDIATEK_NETSYS_V2)
+#if defined(CONFIG_MEDIATEK_NETSYS_RX_V2)
+#define PDMA_BASE               0x6000
+#else
+#define PDMA_BASE               0x4000
+#endif
+#define QDMA_BASE               0x4400
+#define WDMA_BASE(x)		(0x4800 + ((x) * 0x400))
+#define PPE_BASE(x)		(0x2200 + ((x) * 0x400))
+#endif
 /* QDMA Tx queue configuration */
 #define QTX_CFG(x)			(QDMA_BASE + ((x) * 0x10))
 #define QTX_CFG_HW_RESV_CNT_OFFSET	(8)
@@ -147,8 +158,19 @@
 
 /*PPE_CAH_CTRL mask*/
 #define CAH_EN (0x1 << 0) /* RW */
+#define CAH_REQ (0x1 << 8) /* RW */
 #define CAH_X_MODE (0x1 << 9) /* RW */
+#define CAH_CMD (0x3 << 12) /* RW */
+#define CAH_DATA_SEL (0x3 << 18) /* RW */
 
+/*PPE_CAH_LINE_RW mask*/
+#define LINE_RW (0xffff << 0) /* RW */
+#define OFFSET_RW (0xff << 16) /* RW */
+/*PPE_CAH_TAG_SRH mask*/
+#define TAG_SRH (0xffff << 0) /* RW */
+#define SRH_LNUM (0x7fff << 16) /* RW */
+#define SRH_HIT (0x1 << 31) /* RW */
+#define MAX_PPE_CACHE_NUM	(128)
 /*PPE_UNB_AGE mask*/
 #define UNB_DLTA (0xff << 0) /* RW */
 #define UNB_MNP (0xffff << 16) /* RW */
@@ -699,11 +721,13 @@ struct mtk_hnat {
 	bool dscp_en;
 	bool macvlan_support;
 	spinlock_t		entry_lock;
+	spinlock_t		cah_lock;
 };
 
 struct extdev_entry {
 	char name[IFNAMSIZ];
 	struct net_device *dev;
+	u16 vlan_id;
 };
 
 struct tcpudphdr {
