@@ -9,14 +9,14 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=ppp
-PKG_VERSION:=2.5.2
-PKG_RELEASE:=2
+PKG_VERSION:=2.5.1
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ppp-project/ppp
-PKG_MIRROR_HASH:=381668ce1547afeaf599f08ae37935bfd3d5841747c62bca5a870c11e3e9bedb
-PKG_SOURCE_DATE:=2024-12-31
-PKG_SOURCE_VERSION:=9f612dc02c34509f062ed63b60bcc7e937e25178
+PKG_SOURCE_DATE:=2024-09-18
+PKG_SOURCE_VERSION:=d5aeec65752d4a9b3bb46771d0b221c4a4a6539e
+PKG_MIRROR_HASH:=b98125933d8160ff3476b053414e787e65a94948c0ecee53f6261cd403ff4b03
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=BSD-4-Clause
@@ -30,22 +30,17 @@ PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+CONFIGURE_VARS += \
+	enable_eaptls=no \
+	enable_microsoft_extensions=yes \
+	enable_peap=no
+
 CONFIGURE_ARGS += \
-	--disable-cbcp \
-	--disable-eaptls \
-	--disable-mslanman \
-	--disable-openssl-engine \
-	--disable-peap \
-	--disable-systemd \
-	--enable-ipv6cp \
-	--enable-microsoft-extensions \
-	--enable-plugins \
-	--with-atm \
-	--with-static-pcap \
-	--without-openssl \
-	--without-pam \
-	--without-pcap \
-	--without-srp
+	with_openssl=no \
+	with_pam=no \
+	with_pcap=no \
+	with_srp=no \
+	with_static_pcap=yes
 
 define Package/ppp/Default
   SECTION:=net
@@ -55,14 +50,14 @@ endef
 
 define Package/ppp
 $(call Package/ppp/Default)
-  DEPENDS:= +USE_GLIBC:libcrypt-compat +kmod-ppp +shellsync +kmod-mppe
+  DEPENDS:=+kmod-ppp +libpthread +shellsync +kmod-mppe
   TITLE:=PPP daemon
   VARIANT:=default
 endef
 
 define Package/ppp-multilink
 $(call Package/ppp/Default)
-  DEPENDS:= +USE_GLIBC:libcrypt-compat +kmod-ppp
+  DEPENDS:=+kmod-ppp
   TITLE:=PPP daemon (with multilink support)
   VARIANT:=multilink
 endef
@@ -190,8 +185,8 @@ not initiate a session. Can be useful to debug pppoe.
 endef
 
 ifeq ($(BUILD_VARIANT),multilink)
-  CONFIGURE_ARGS += \
-	--enable-multilink
+  CONFIGURE_VARS += \
+	enable_multilink=yes
 endif
 
 define Build/InstallDev

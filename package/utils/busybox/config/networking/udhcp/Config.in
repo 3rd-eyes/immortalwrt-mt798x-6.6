@@ -11,13 +11,6 @@ config BUSYBOX_CONFIG_UDHCPD
 	udhcpd is a DHCP server geared primarily toward embedded systems,
 	while striving to be fully functional and RFC compliant.
 
-config BUSYBOX_CONFIG_FEATURE_UDHCPD_BOOTP
-	bool "Answer to BOOTP requests as well"
-	default BUSYBOX_DEFAULT_FEATURE_UDHCPD_BOOTP
-	depends on BUSYBOX_CONFIG_UDHCPD
-	help
-	Support old BOOTP protocol too.
-
 config BUSYBOX_CONFIG_FEATURE_UDHCPD_BASE_IP_ON_MAC
 	bool "Select IP address based on client MAC"
 	default BUSYBOX_DEFAULT_FEATURE_UDHCPD_BASE_IP_ON_MAC
@@ -51,7 +44,7 @@ config BUSYBOX_CONFIG_DHCPD_LEASES_FILE
 	of the file. Normally it is safe to leave it untouched.
 
 config BUSYBOX_CONFIG_DUMPLEASES
-	bool "dumpleases (5.3 kb)"
+	bool "dumpleases (5.1 kb)"
 	default BUSYBOX_DEFAULT_DUMPLEASES
 	help
 	dumpleases displays the leases written out by the udhcpd.
@@ -59,7 +52,7 @@ config BUSYBOX_CONFIG_DUMPLEASES
 	by the absolute time that it expires in seconds from epoch.
 
 config BUSYBOX_CONFIG_DHCPRELAY
-	bool "dhcprelay (5.5 kb)"
+	bool "dhcprelay (5.2 kb)"
 	default BUSYBOX_DEFAULT_DHCPRELAY
 	help
 	dhcprelay listens for DHCP requests on one or more interfaces

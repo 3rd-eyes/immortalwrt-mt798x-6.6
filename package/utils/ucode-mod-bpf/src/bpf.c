@@ -17,6 +17,7 @@
 #define err_return(err, ...) do { set_error(err, __VA_ARGS__); return NULL; } while(0)
 #define TRUE ucv_boolean_new(true)
 
+static uc_resource_type_t *module_type, *map_type, *map_iter_type, *program_type;
 static uc_value_t *registry;
 static uc_vm_t *debug_vm;
 
@@ -183,38 +184,21 @@ uc_bpf_open_module(uc_vm_t *vm, size_t nargs)
 		err_return(errno, NULL);
 	}
 
-	return ucv_resource_create(vm, "bpf.module", obj);
+	return uc_resource_new(module_type, obj);
 }
 
 static uc_value_t *
-uc_bpf_map_create(uc_vm_t *vm, uc_value_t *mod, int fd, unsigned int key_size,
-		  unsigned int val_size, bool close)
+uc_bpf_map_create(int fd, unsigned int key_size, unsigned int val_size, bool close)
 {
 	struct uc_bpf_map *uc_map;
-	uc_value_t *res;
 
-	res = ucv_resource_create_ex(vm, "bpf.map", (void **)&uc_map, 1, sizeof(*uc_map));
-	ucv_resource_value_set(res, 0, ucv_get(mod));
+	uc_map = xalloc(sizeof(*uc_map));
 	uc_map->fd.fd = fd;
 	uc_map->key_size = key_size;
 	uc_map->val_size = val_size;
 	uc_map->fd.close = close;
 
-	return res;
-}
-
-static uc_value_t *
-uc_bpf_prog_create(uc_vm_t *vm, uc_value_t *mod, int fd, bool close)
-{
-	struct uc_bpf_fd *uc_fd;
-	uc_value_t *res;
-
-	res = ucv_resource_create_ex(vm, "bpf.program", (void **)&uc_fd, 1, sizeof(*uc_fd));
-	ucv_resource_value_set(res, 0, ucv_get(mod));
-	uc_fd->fd = fd;
-	uc_fd->close = close;
-
-	return res;
+	return uc_resource_new(map_type, uc_map);
 }
 
 static uc_value_t *
@@ -239,13 +223,14 @@ uc_bpf_open_map(uc_vm_t *vm, size_t nargs)
 		err_return(errno, NULL);
 	}
 
-	return uc_bpf_map_create(vm, NULL, fd, info.key_size, info.value_size, true);
+	return uc_bpf_map_create(fd, info.key_size, info.value_size, true);
 }
 
 static uc_value_t *
 uc_bpf_open_program(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *path = uc_fn_arg(0);
+	struct uc_bpf_fd *f;
 	int fd;
 
 	if (ucv_type(path) != UC_STRING)
@@ -255,7 +240,11 @@ uc_bpf_open_program(uc_vm_t *vm, size_t nargs)
 	if (fd < 0)
 		err_return(errno, NULL);
 
-	return uc_bpf_prog_create(vm, NULL, fd, true);
+	f = xalloc(sizeof(*f));
+	f->fd = fd;
+	f->close = true;
+
+	return uc_resource_new(program_type, f);
 }
 
 static uc_value_t *
@@ -295,7 +284,7 @@ uc_bpf_module_get_map(uc_vm_t *vm, size_t nargs)
 	if (fd < 0)
 		err_return(EINVAL, NULL);
 
-	return uc_bpf_map_create(vm, _uc_fn_this_res(vm), fd, bpf_map__key_size(map), bpf_map__value_size(map), false);
+	return uc_bpf_map_create(fd, bpf_map__key_size(map), bpf_map__value_size(map), false);
 }
 
 static uc_value_t *
@@ -322,6 +311,7 @@ uc_bpf_module_get_program(uc_vm_t *vm, size_t nargs)
 	struct bpf_object *obj = uc_fn_thisval("bpf.module");
 	struct bpf_program *prog;
 	uc_value_t *name = uc_fn_arg(0);
+	struct uc_bpf_fd *f;
 	int fd;
 
 	if (!obj || !name || ucv_type(name) != UC_STRING)
@@ -335,7 +325,10 @@ uc_bpf_module_get_program(uc_vm_t *vm, size_t nargs)
 	if (fd < 0)
 		err_return(EINVAL, NULL);
 
-	return uc_bpf_prog_create(vm, _uc_fn_this_res(vm), fd, false);
+	f = xalloc(sizeof(*f));
+	f->fd = fd;
+
+	return uc_resource_new(program_type, f);
 }
 
 static void *
@@ -500,18 +493,16 @@ uc_bpf_map_iterator(uc_vm_t *vm, size_t nargs)
 {
 	struct uc_bpf_map *map = uc_fn_thisval("bpf.map");
 	struct uc_bpf_map_iter *iter;
-	uc_value_t *res;
 
 	if (!map)
 		err_return(EINVAL, NULL);
 
-	res = ucv_resource_create_ex(vm, "bpf.map_iter", (void **)&iter, 1, sizeof(*iter) + map->key_size);
-	ucv_resource_value_set(res, 0, ucv_get(_uc_fn_this_res(vm)));
+	iter = xalloc(sizeof(*iter) + map->key_size);
 	iter->fd = map->fd.fd;
 	iter->key_size = map->key_size;
 	iter->has_next = !bpf_map_get_next_key(iter->fd, NULL, &iter->key);
 
-	return res;
+	return uc_resource_new(map_iter_type, iter);
 }
 
 static uc_value_t *
@@ -620,7 +611,7 @@ uc_bpf_map_pin(uc_vm_t *vm, size_t nargs)
 
 static uc_value_t *
 uc_bpf_set_tc_hook(uc_value_t *ifname, uc_value_t *type, uc_value_t *prio,
-		   uc_value_t *classid, int fd)
+		   int fd)
 {
 	DECLARE_LIBBPF_OPTS(bpf_tc_hook, hook);
 	DECLARE_LIBBPF_OPTS(bpf_tc_opts, attach_tc,
@@ -657,7 +648,6 @@ uc_bpf_set_tc_hook(uc_value_t *ifname, uc_value_t *type, uc_value_t *prio,
 		goto out;
 
 	attach_tc.prog_fd = fd;
-	attach_tc.classid = ucv_int64_get(classid);
 	if (bpf_tc_attach(&hook, &attach_tc) < 0)
 		goto error;
 
@@ -677,12 +667,11 @@ uc_bpf_program_tc_attach(uc_vm_t *vm, size_t nargs)
 	uc_value_t *ifname = uc_fn_arg(0);
 	uc_value_t *type = uc_fn_arg(1);
 	uc_value_t *prio = uc_fn_arg(2);
-	uc_value_t *classid = uc_fn_arg(3);
 
 	if (!f)
 		err_return(EINVAL, NULL);
 
-	return uc_bpf_set_tc_hook(ifname, type, prio, classid, f->fd);
+	return uc_bpf_set_tc_hook(ifname, type, prio, f->fd);
 }
 
 static uc_value_t *
@@ -692,7 +681,7 @@ uc_bpf_tc_detach(uc_vm_t *vm, size_t nargs)
 	uc_value_t *type = uc_fn_arg(1);
 	uc_value_t *prio = uc_fn_arg(2);
 
-	return uc_bpf_set_tc_hook(ifname, type, prio, NULL, -1);
+	return uc_bpf_set_tc_hook(ifname, type, prio, -1);
 }
 
 static int
@@ -788,6 +777,7 @@ static void uc_bpf_fd_free(void *ptr)
 
 	if (f->close)
 		close(f->fd);
+	free(f);
 }
 
 static const uc_function_list_t map_iter_fns[] = {
@@ -817,8 +807,8 @@ void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
 	registry = ucv_array_new(vm);
 	uc_vm_registry_set(vm, "bpf.registry", registry);
 
-	uc_type_declare(vm, "bpf.module", module_fns, module_free);
-	uc_type_declare(vm, "bpf.map", map_fns, uc_bpf_fd_free);
-	uc_type_declare(vm, "bpf.map_iter", map_iter_fns, NULL);
-	uc_type_declare(vm, "bpf.program", prog_fns, uc_bpf_fd_free);
+	module_type = uc_type_declare(vm, "bpf.module", module_fns, module_free);
+	map_type = uc_type_declare(vm, "bpf.map", map_fns, uc_bpf_fd_free);
+	map_iter_type = uc_type_declare(vm, "bpf.map_iter", map_iter_fns, free);
+	program_type = uc_type_declare(vm, "bpf.program", prog_fns, uc_bpf_fd_free);
 }

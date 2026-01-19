@@ -18,13 +18,6 @@
 #include <linux/netdevice.h>
 #include "../mtk_eth_soc.h"
 
-/* Frame Engine Reset FSM */
-#define MTK_FE_START_RESET	0x2000
-#define MTK_FE_RESET_DONE	0x2001
-#define MTK_WIFI_RESET_DONE	0x2002
-#define MTK_WIFI_CHIP_ONLINE 	0x2003
-#define MTK_WIFI_CHIP_OFFLINE 	0x2004
-#define MTK_FE_RESET_NAT_DONE	0x4001
 #define HNAT_SKB_CB2(__skb) ((struct hnat_skb_cb2 *)&((__skb)->cb[44]))
 struct hnat_skb_cb2 {
 	__u32 magic;
