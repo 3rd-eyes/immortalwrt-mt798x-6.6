@@ -229,6 +229,7 @@ return view.extend({
 		o.optional = true;
 		o.datatype = 'range(1,30)';
 		o.placeholder = 30;
+		o.default = 30;
 		o.depends('fastpath_mh_eth_hnat', '1');
 
 		o = s.option(form.ListValue, 'fastpath_mh_eth_hnat_ppenum', _('Number of HNAT PPE'),
