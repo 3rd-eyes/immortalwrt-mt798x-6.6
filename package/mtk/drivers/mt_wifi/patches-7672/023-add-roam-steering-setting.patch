@@ -59,14 +59,12 @@
  #endif /* SPECIFIC_TX_POWER_SUPPORT */
  	{"AssocReqRssiThres",           Set_AP_ASSOC_REQ_RSSI_THRESHOLD},
  	{"KickStaRssiLow",				Set_AP_KickStaRssiLow_Proc},
++#ifdef BAND_STEERING
 +	{"Steeringthresold",				Set_AP_SteeringThreshold_Proc},
++#endif /* BAND_STEERING */
  #ifdef ZERO_LOSS_CSA_SUPPORT
-	{"KickOffSta",					Set_KickOffSta_Proc},
-	{"KickOffTime",					Set_KickOffTime_Proc},
- #endif
-	{"PtkRekey",					Set_PtkRekey_Proc},
- #ifdef OCE_SUPPORT
- 	{"OceRssiThreshold",			Set_OceRssiThreshold_Proc},
+ 	{"KickOffSta",					Set_KickOffSta_Proc},
+ 	{"KickOffTime",					Set_KickOffTime_Proc},
 @@ -14528,6 +14530,16 @@
  	TRUE if all parameters are OK, FALSE otherwise
      ==========================================================================
