@@ -309,7 +309,7 @@ define KernelPackage/mt_wifi/config
 endef
 
 define MT_WIFI_SRC_PATCH
-	@if [ "$$(CONFIG_MTK_FW_NEW_API_PATCH)" = "y" ] && [ "$$(CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7661)" = "y" ]; then \
+	@if [ "$$(CONFIG_MTK_FW_NEW_API_PATCH)" = "y" ]; then \
 		echo "Fixup new mcu fw API"; \
 		patch -p1 -d $(PKG_BUILD_DIR) < ./files/fix-new-mcu-fw-api.patch; \
 	fi

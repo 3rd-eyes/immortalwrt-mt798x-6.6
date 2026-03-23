@@ -1,3 +1,4 @@
 #!/bin/sh
 
-startwapp.sh
+sh /sbin/startwapp.sh
+/sbin/steering_daemon &

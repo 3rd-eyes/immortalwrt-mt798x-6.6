@@ -1,25 +1,26 @@
-ra0_7981_channel="$(uci get wireless.MT7981_1_1.channel)"
-ra0_7986_channel="$(uci get wireless.MT7986_1_1.channel)"
-rax0_7981_channel="$(uci get wireless.MT7981_1_2.channel)"
-rax0_7986_channel="$(uci get wireless.MT7986_1_2.channel)"
-if [ "$ra0_7981_channel" -gt "0" ];then 
-    wappctrl ra0 mbo nebor_op_ch $ra0_7981_channel
-fi
-if [ "$ra0_7986_channel" -gt "0" ];then 
-    wappctrl ra0 mbo nebor_op_ch $ra0_7986_channel
-fi
-if [ "$rax0_7981_channel" -gt "0" ];then 
-    wappctrl rax0 mbo nebor_op_ch $rax0_7981_channel
-fi
-if [ "$rax0_7986_channel" -gt "0" ];then
-    wappctrl rax0 mbo nebor_op_ch $rax0_7986_channel
-fi
-bssid=$2
-array=(${bssid//\/ })
-for var in ${array[@]}
-        do
-        echo $var
-        wappctrl $1 mbo nebor_bssid $var
-        wappctrl $1 mbo add_test_nr $var
-        done
+#!/bin/sh
 
+get_channel() {
+    val="$(uci get "$1" 2>/dev/null)"
+    [ -z "$val" ] && val=0
+    echo "$val"
+}
+
+ra0_7981_channel="$(get_channel wireless.MT7981_1_1.channel)"
+ra0_7986_channel="$(get_channel wireless.MT7986_1_1.channel)"
+rax0_7981_channel="$(get_channel wireless.MT7981_1_2.channel)"
+rax0_7986_channel="$(get_channel wireless.MT7986_1_2.channel)"
+
+[ "$ra0_7981_channel" -gt 0 ] 2>/dev/null && echo "MT7981 Ra0 Channel:$ra0_7981_channel" && wappctrl ra0 mbo nebor_op_ch "$ra0_7981_channel"
+[ "$ra0_7986_channel" -gt 0 ] 2>/dev/null && echo "MT7986 Ra0 Channel:$ra0_7986_channel" && wappctrl ra0 mbo nebor_op_ch "$ra0_7986_channel"
+[ "$rax0_7981_channel" -gt 0 ] 2>/dev/null && echo "MT7981 Rax0 Channel:$rax0_7981_channel" && wappctrl rax0 mbo nebor_op_ch "$rax0_7981_channel"
+[ "$rax0_7986_channel" -gt 0 ] 2>/dev/null && echo "MT7986 Rax0 Channel:$rax0_7986_channel" && wappctrl rax0 mbo nebor_op_ch "$rax0_7986_channel"
+
+iface="$1"
+bssid_list="$2"
+
+for var in $bssid_list; do
+    echo "$var"
+    wappctrl "$iface" mbo nebor_bssid "$var"
+    wappctrl "$iface" mbo add_test_nr "$var"
+done
