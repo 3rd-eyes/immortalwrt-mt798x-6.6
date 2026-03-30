@@ -340,8 +340,8 @@ define KernelPackage/mt_wifi/install
 		$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/mt7916/rebb/MT7916_* $(1)/lib/firmware/; \
 	fi ; \
 	if [ "$$(CONFIG_MTK_CHIP_MT7981)" = "y" ] ; then \
-		$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/mt7981/rebb/MT7981_* \
-        $(PKG_BUILD_DIR)/bin/mt7981/rebb/e2p \
+		$(INSTALL_BIN) ./files/mt7981-default-eeprom/MT7981_* \
+        ./files/mt7981-default-eeprom/e2p \
         $(1)/lib/firmware/; \
 	fi ; \
 	if [ "$$(CONFIG_MTK_WIFI_FW_BIN_LOAD)" = "y" ]; then \
