@@ -237,6 +237,9 @@ choice
 
 	config MTK_MT_WIFI_MT7981_20250408
 	bool "mt7981-fw-20250408"
+	
+	config MTK_MT_WIFI_MT7981_20260323
+	bool "mt7981-fw-20260323"
 endchoice
 
 choice
@@ -281,6 +284,7 @@ config MTK_MT_WIFI_FIRMWARE_PATH_MT7981
 	default mt7981-fw-20231024 if MTK_MT_WIFI_MT7981_20231024
 	default mt7981-fw-20240823 if MTK_MT_WIFI_MT7981_20240823
 	default mt7981-fw-20250408 if MTK_MT_WIFI_MT7981_20250408
+	default "mt7981-fw-20260323" if MTK_MT_WIFI_MT7981_20260323
 
 config MTK_MT_WIFI_FIRMWARE_PATH_MT7986
 	string
@@ -746,7 +750,7 @@ config MTK_OCE_SUPPORT
 	bool "Optimized Connectivity Experience Support"
 	depends on MTK_MT_AP_SUPPORT
 	depends on MTK_MBO_SUPPORT
-	depends on MTK_CHIP_MT7915 || MTK_CHIP_MT7986
+	depends on MTK_CHIP_MT7915 || MTK_CHIP_MT7916 || MTK_CHIP_MT7986 || MTK_CHIP_MT7981
 	default y
 
 config MTK_WTBL_TDD_SUPPORT
