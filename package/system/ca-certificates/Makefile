@@ -67,37 +67,4 @@ define Package/ca-bundle/install
 	$(LN) /etc/ssl/certs/ca-certificates.crt $(1)/etc/ssl/cert.pem
 endef
 $(eval $(call BuildPackage,ca-bundle))
-$(eval $(call BuildPackage,ca-certificates))  CATEGORY:=Base system
-  TITLE:=System CA certificates as a bundle
-  PKGARCH:=all
-  PROVIDES:=ca-certs
-endef
-
-define Build/Install
-	mkdir -p \
-		$(PKG_INSTALL_DIR)/usr/sbin \
-		$(PKG_INSTALL_DIR)/usr/share/ca-certificates
-	$(call Build/Install/Default,)
-endef
-
-define Package/ca-certificates/install
-	$(INSTALL_DIR) $(1)/etc/ssl/certs
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/share/ca-certificates/*/*.crt $(1)/etc/ssl/certs/
-
-	for CERTFILE in `ls -1 $(1)/etc/ssl/certs`; do \
-		HASH=`openssl x509 -hash -noout -in $(1)/etc/ssl/certs/$$$$CERTFILE` ; \
-		SUFFIX=0 ; \
-		while [ -h "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ]; do \
-			let "SUFFIX += 1" ; \
-		done ; \
-		$(LN) "$$$$CERTFILE" "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ; \
-	done
-endef
-
-define Package/ca-bundle/install
-	$(INSTALL_DIR) $(1)/etc/ssl/certs
-	cat $(PKG_INSTALL_DIR)/usr/share/ca-certificates/*/*.crt >$(1)/etc/ssl/certs/ca-certificates.crt
-	$(LN) /etc/ssl/certs/ca-certificates.crt $(1)/etc/ssl/cert.pem
-endef
-$(eval $(call BuildPackage,ca-bundle))
 $(eval $(call BuildPackage,ca-certificates))
