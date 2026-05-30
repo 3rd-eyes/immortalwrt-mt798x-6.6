@@ -354,7 +354,7 @@ TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 define Build/Compile
-	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
+	+$(MAKE) $(PKG_JOBS=-j1) -C $(PKG_BUILD_DIR) \
 		CC="$(TARGET_CC)" \
 		SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH) \
 		OPENWRT_OPTIMIZATION_FLAGS="$(TARGET_CFLAGS)" \
