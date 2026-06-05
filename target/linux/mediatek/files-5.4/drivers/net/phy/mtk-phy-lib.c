@@ -141,7 +141,7 @@ static int extend_an_new_lp_cnt_limit(struct phy_device *phydev)
 		 */
 		mtk_tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
 			      FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0xf));
-		mdelay(1500);
+		msleep(1500);
 
 		timeout = read_poll_timeout(mtk_tr_read, reg_val,
 					    (reg_val & AN_STATE_MASK) !=
@@ -150,12 +150,12 @@ static int extend_an_new_lp_cnt_limit(struct phy_device *phydev)
 					    10000, 1000000, false, phydev,
 					    0x0, 0xf, 0x2);
 		if (!timeout) {
-			mdelay(625);
+			msleep(625);
 			mtk_tr_modify(phydev, 0x0, 0xf, 0x3c,
 				      AN_NEW_LP_CNT_LIMIT_MASK,
 				      FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK,
 						 0x8));
-			mdelay(500);
+			msleep(500);
 			mtk_tr_modify(phydev, 0x0, 0xf, 0x3c,
 				      AN_NEW_LP_CNT_LIMIT_MASK,
 				      FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK,
