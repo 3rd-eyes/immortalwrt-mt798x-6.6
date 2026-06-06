@@ -1,1 +1,1 @@
-link brcmfmac43430-sdio.txt
+brcmfmac43430-sdio.txt
