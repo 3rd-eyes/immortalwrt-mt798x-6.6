@@ -10,7 +10,6 @@
 #ifndef _LINUX_NTFS3_NTFS_H
 #define _LINUX_NTFS3_NTFS_H
 
-
 #include <linux/blkdev.h>
 #include <linux/build_bug.h>
 #include <linux/kernel.h>
