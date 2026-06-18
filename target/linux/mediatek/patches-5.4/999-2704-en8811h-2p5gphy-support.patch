@@ -9,11 +9,9 @@ Subject: [PATCH]
  drivers/net/phy/Makefile      |   2 +
  2 files changed, 13 insertions(+)
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 170dd00cd..5eeccfee2 100644
 --- a/drivers/net/phy/Kconfig
 +++ b/drivers/net/phy/Kconfig
-@@ -345,6 +345,17 @@ config SFP
+@@ -352,6 +352,17 @@ config SFP
  	depends on HWMON || HWMON=n
  	select MDIO_I2C
  
@@ -31,14 +29,14 @@ index 170dd00cd..5eeccfee2 100644
  config ADIN_PHY
  	tristate "Analog Devices Industrial Ethernet PHYs"
  	help
-diff -urN a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
---- a/drivers/net/phy/Makefile	2022-03-26 16:28:57.619384439 +0800
-+++ b/drivers/net/phy/Makefile	2022-03-26 16:31:40.893705848 +0800
-@@ -111,6 +111,8 @@
- obj-$(CONFIG_TERANETICS_PHY)	+= teranetics.o
- obj-$(CONFIG_VITESSE_PHY)	+= vitesse.o
- obj-$(CONFIG_XILINX_GMII2RGMII) += xilinx_gmii2rgmii.o
+--- a/drivers/net/phy/Makefile
++++ b/drivers/net/phy/Makefile
+@@ -68,6 +68,8 @@ aquantia-objs			+= aquantia_main.o
+ ifdef CONFIG_HWMON
+ aquantia-objs			+= aquantia_hwmon.o
+ endif
 +air_en8811h-y := air_en8811h_main.o air_en8811h_api.o
-+obj-$(CONFIG_AIROHA_EN8811H_PHY)       += air_en8811h.o
- obj-$(CONFIG_MT753X_GSW)        += mtk/mt753x/
- obj-$(CONFIG_RTL8367S_GSW)	+= rtk/
++obj-$(CONFIG_AIROHA_EN8811H_PHY)	+= air_en8811h.o
+ obj-$(CONFIG_AQUANTIA_PHY)	+= aquantia.o
+ obj-$(CONFIG_AX88796B_PHY)	+= ax88796b.o
+ obj-$(CONFIG_AT803X_PHY)	+= at803x.o

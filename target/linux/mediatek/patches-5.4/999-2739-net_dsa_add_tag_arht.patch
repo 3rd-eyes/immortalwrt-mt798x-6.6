@@ -1,0 +1,40 @@
+--- a/net/dsa/Makefile
++++ b/net/dsa/Makefile
+@@ -16,3 +16,4 @@ obj-$(CONFIG_NET_DSA_TAG_MTK) += tag_mtk
+ obj-$(CONFIG_NET_DSA_TAG_QCA) += tag_qca.o
+ obj-$(CONFIG_NET_DSA_TAG_SJA1105) += tag_sja1105.o
+ obj-$(CONFIG_NET_DSA_TAG_TRAILER) += tag_trailer.o
++obj-$(CONFIG_NET_DSA_TAG_AIROHA) += tag_arht.o
+--- a/net/dsa/Kconfig
++++ b/net/dsa/Kconfig
+@@ -74,6 +74,12 @@ config NET_DSA_TAG_MTK
+ 	  Say Y or M if you want to enable support for tagging frames for
+ 	  Mediatek switches.
+ 
++config NET_DSA_TAG_AIROHA
++	tristate "Tag driver for Airoha switches"
++	help
++	  Say Y or M if you want to enable support for tagging frames for
++	  Airoha switches.
++
+ config NET_DSA_TAG_KSZ
+ 	tristate "Tag driver for Microchip 8795/9477/9893 families of switches"
+ 	help
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -43,6 +43,7 @@ struct phylink_link_state;
+ #define DSA_TAG_PROTO_SJA1105_VALUE		13
+ #define DSA_TAG_PROTO_KSZ8795_VALUE		14
+ #define DSA_TAG_PROTO_RTL4_A_VALUE		17
++#define DSA_TAG_PROTO_ARHT_VALUE		28
+ 
+ enum dsa_tag_protocol {
+ 	DSA_TAG_PROTO_NONE		= DSA_TAG_PROTO_NONE_VALUE,
+@@ -61,6 +62,7 @@ enum dsa_tag_protocol {
+ 	DSA_TAG_PROTO_SJA1105		= DSA_TAG_PROTO_SJA1105_VALUE,
+ 	DSA_TAG_PROTO_KSZ8795		= DSA_TAG_PROTO_KSZ8795_VALUE,
+ 	DSA_TAG_PROTO_RTL4_A		= DSA_TAG_PROTO_RTL4_A_VALUE,
++	DSA_TAG_PROTO_ARHT		= DSA_TAG_PROTO_ARHT_VALUE,
+ };
+ 
+ struct packet_type;
