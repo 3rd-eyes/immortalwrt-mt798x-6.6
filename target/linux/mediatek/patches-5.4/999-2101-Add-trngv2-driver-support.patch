@@ -164,7 +164,7 @@ Subject: [PATCH] [slow-speed-io][999-2101-Add-trngv2-driver-support.patch]
 +};
 +
 +static const struct mtk_rng_of_data mt7986_rng_data = {
-+	.rng_version = 2,
++	.rng_version = 1,
 +};
 +
 +static const struct mtk_rng_of_data mt7623_rng_data = {
