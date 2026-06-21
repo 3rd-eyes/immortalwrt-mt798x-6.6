@@ -2338,6 +2338,7 @@ struct mtk_eth {
 	struct mii_bus			*mii_bus;
 	unsigned int			mdc_divider;
 	struct work_struct		pending_work;
+	struct work_struct		netdev_restart_work;
 	unsigned long			state;
 
 	struct ptp_clock_info		ptp_info;
