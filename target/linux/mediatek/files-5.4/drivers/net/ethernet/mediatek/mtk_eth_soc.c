@@ -2263,14 +2263,15 @@ static void mtk_tx_set_dma_desc_v3(struct sk_buff *skb, struct net_device *dev, 
 		/* carry cdrt index for encryption */
 		cdrt = skb_hnat_cdrt(skb);
 		skb_hnat_magic_tag(skb) = 0;
+		 }
 #else
 	else if (unlikely(skb->inner_protocol == IPPROTO_ESP &&
 		 skb_tnl_cdrt(skb) && is_tnl_tag_valid(skb))) {
 		cdrt = skb_tnl_cdrt(skb);
 		skb_tnl_magic_tag(skb) = 0;
+		 }
 #endif
 		tport = EIP197_TPORT;
-	}
 
 	if (tport) {
 		data &= ~(TX_DMA_TPORT_MASK << TX_DMA_TPORT_SHIFT);
@@ -3589,6 +3590,9 @@ static int mtk_hwlro_rx_init(struct mtk_eth *eth)
 	/* switch priority comparison to packet count mode */
 	lro_ctrl_dw0 |= MTK_LRO_ALT_PKT_CNT_MODE;
 
+	/* enable L4 PSH flag check */
+	lro_ctrl_dw0 |= MTK_LRO_L4_CTRL_PSH_EN;
+
 	/* bandwidth threshold setting */
 	mtk_w32(eth, MTK_HW_LRO_BW_THRE, reg_map->pdma.lro_ctrl_dw0 + 0x8);
 
@@ -3598,6 +3602,9 @@ static int mtk_hwlro_rx_init(struct mtk_eth *eth)
 	/* set refresh timer for altering flows to 1 sec. (unit: 20us) */
 	mtk_w32(eth, (MTK_HW_LRO_TIMER_UNIT << 16) | MTK_HW_LRO_REFRESH_TIME,
 		MTK_PDMA_LRO_ALT_REFRESH_TIMER);
+
+	/* enable max 4-depth VLAN support including switch special tag */
+	lro_ctrl_dw3 |= MTK_LRO_VLAN_VID_CMP_DEPTH | MTK_LRO_VLAN_EN;
 
 	/* the minimal remaining room of SDL0 in RXD for lro aggregation */
 	lro_ctrl_dw3 |= MTK_LRO_MIN_RXD_SDL;
@@ -4285,16 +4292,19 @@ static void mtk_tx_timeout(struct net_device *dev)
 {
 	struct mtk_mac *mac = netdev_priv(dev);
 	struct mtk_eth *eth = mac->hw;
-	bool pse_fc = false;
+	struct gdm_tx_monitor *gdm_tx;
+	bool gdm_rxfc = false;
+	int i;
 
 	eth->netdev[mac->id]->stats.tx_errors++;
 	netif_err(eth, tx_err, dev,
 		  "transmit timed out\n");
 
-	if (MTK_HAS_CAPS(eth->soc->caps, MTK_QDMA))
-		pse_fc = eth->reset.qdma_monitor.tx.pse_fc;
+	gdm_tx = &eth->reset.gdm_monitor.tx;
+	for (i = 0; i < MTK_MAX_DEVS; i++)
+		gdm_rxfc |= gdm_tx->rxfc[i];
 
-	if (atomic_read(&reset_lock) == 0 && pse_fc == false)
+	if (atomic_read(&reset_lock) == 0 && gdm_rxfc == false)
 		schedule_work(&eth->pending_work);
 }
 
@@ -4698,9 +4708,13 @@ static int mtk_open(struct net_device *dev)
 
 	netif_tx_start_all_queues(dev);
 	phy_node = of_parse_phandle(mac->of_node, "phy-handle", 0);
-	if (!phy_node && eth->sgmii && eth->sgmii->pcs[id].regmap)
+	if (!phy_node && mac->interface == PHY_INTERFACE_MODE_SGMII &&
+	    eth->sgmii && eth->sgmii->pcs[id].regmap) {
+		mutex_lock(&eth->sgmii->pcs[id].reset_lock);
 		regmap_write(eth->sgmii->pcs[id].regmap,
 			     SGMSYS_QPHY_PWR_STATE_CTRL, 0);
+		mutex_unlock(&eth->sgmii->pcs[id].reset_lock);
+	}
 
 	mtk_gdm_config(eth, mac->id, MTK_GDMA_TO_PDMA);
 
@@ -4788,12 +4802,15 @@ static int mtk_stop(struct net_device *dev)
 	netif_tx_disable(dev);
 
 	phy_node = of_parse_phandle(mac->of_node, "phy-handle", 0);
-	if (!phy_node && eth->sgmii && eth->sgmii->pcs[id].regmap) {
+	if (!phy_node && mac->interface == PHY_INTERFACE_MODE_SGMII &&
+	    eth->sgmii && eth->sgmii->pcs[id].regmap) {
+		mutex_lock(&eth->sgmii->pcs[id].reset_lock);
 		regmap_read(eth->sgmii->pcs[id].regmap,
 			    SGMSYS_QPHY_PWR_STATE_CTRL, &val);
 		val |= SGMII_PHYA_PWD;
 		regmap_write(eth->sgmii->pcs[id].regmap,
 			     SGMSYS_QPHY_PWR_STATE_CTRL, val);
+		mutex_unlock(&eth->sgmii->pcs[id].reset_lock);
 	}
 
 	//GMAC RX disable

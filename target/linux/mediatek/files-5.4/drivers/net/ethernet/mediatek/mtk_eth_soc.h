@@ -337,6 +337,8 @@
 #define MTK_CTRL_DW0_SDL_OFFSET		(3)
 #define MTK_CTRL_DW0_SDL_MASK		BITS(3, 18)
 
+#define MTK_LRO_VLAN_EN			(0xf << 8)
+#define MTK_LRO_VLAN_VID_CMP_DEPTH	(0x3 << 12)
 #define MTK_ADMA_MODE			BIT(15)
 #define MTK_LRO_MIN_RXD_SDL		(MTK_HW_LRO_SDL_REMAIN_ROOM << 16)
 
@@ -2146,7 +2148,6 @@ struct mtk_usxgmii_pcs {
 	struct regmap		*regmap;
 	struct regmap		*regmap_pextp;
 	struct mutex		regmap_lock;
-	struct mutex		reset_lock;
 	phy_interface_t		interface;
 	bool			link_poll_enable;
 	unsigned long		link_poll_expire;
@@ -2166,6 +2167,7 @@ struct mtk_usxgmii_pcs {
  */
 struct mtk_usxgmii {
 	struct mtk_usxgmii_pcs	pcs[MTK_MAX_DEVS];
+	struct mutex		toprgu_lock;
 	struct regmap		*pll;
 };
 
@@ -2203,7 +2205,6 @@ struct adma_monitor {
 
 struct qdma_monitor {
 	struct qdma_tx_monitor {
-		bool		pse_fc;
 		u8		hang_count;
 	} tx;
 	struct qdma_rx_monitor {
@@ -2248,6 +2249,7 @@ struct wdma_monitor {
 
 struct gdm_monitor {
 	struct gdm_tx_monitor {
+		bool		rxfc[MTK_MAX_DEVS];
 		u64		pre_tx_cnt[MTK_MAX_DEVS];
 		u32		pre_rxfc_cnt[MTK_MAX_DEVS];
 		u32		pre_fsm_gdm[MTK_MAX_DEVS];
