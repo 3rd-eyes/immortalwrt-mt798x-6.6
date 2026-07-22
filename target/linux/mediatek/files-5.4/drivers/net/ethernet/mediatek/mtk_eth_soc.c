@@ -898,6 +898,7 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
 		 * being setup done.
 		 */
 		sgmii_mask = mtk_syscfg0_sgmii_mask(mac);
+
 		spin_lock(&eth->syscfg0_lock);
 		regmap_read(eth->ethsys, ETHSYS_SYSCFG0, &val);
 
@@ -969,6 +970,7 @@ static int mtk_mac_finish(struct phylink_config *config, unsigned int mode,
 	if (interface == PHY_INTERFACE_MODE_SGMII ||
 	    phy_interface_mode_is_8023z(interface)) {
 		u32 sgmii_mask = mtk_syscfg0_sgmii_mask(mac);
+
 		spin_lock(&eth->syscfg0_lock);
 		regmap_update_bits(eth->ethsys, ETHSYS_SYSCFG0,
 				   sgmii_mask, mac->syscfg0);
@@ -2288,15 +2290,16 @@ static void mtk_tx_set_dma_desc_v3(struct sk_buff *skb, struct net_device *dev, 
 		/* carry cdrt index for encryption */
 		cdrt = skb_hnat_cdrt(skb);
 		skb_hnat_magic_tag(skb) = 0;
-		 }
+		tport = EIP197_TPORT;
+	}
 #else
 	else if (unlikely(skb->inner_protocol == IPPROTO_ESP &&
 		 skb_tnl_cdrt(skb) && is_tnl_tag_valid(skb))) {
 		cdrt = skb_tnl_cdrt(skb);
 		skb_tnl_magic_tag(skb) = 0;
-		 }
-#endif
 		tport = EIP197_TPORT;
+	}
+#endif
 
 	if (tport) {
 		data &= ~(TX_DMA_TPORT_MASK << TX_DMA_TPORT_SHIFT);
